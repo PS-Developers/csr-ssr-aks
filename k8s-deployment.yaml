@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: csr-ssr-app
+  labels:
+    app: csr-ssr-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: csr-ssr-app
+  template:
+    metadata:
+      labels:
+        app: csr-ssr-app
+    spec:
+      containers:
+      - name: csr-ssr-app
+        image: registry1763702421975.azurecr.io/image-workflow-1763702327921:latest
+        ports:
+        - containerPort: 3000
+        env:
+        - name: NODE_ENV
+          value: "production"
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: csr-ssr-service
+spec:
+  selector:
+    app: csr-ssr-app
+  ports:
+  - port: 80
+    targetPort: 3000
+  type: LoadBalancer
